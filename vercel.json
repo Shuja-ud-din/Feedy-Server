@@ -1,5 +1,6 @@
 {
     "version": 2,
+    "name": "native-server",
     "builds": [
         {
             "src": "server.js",
@@ -8,11 +9,7 @@
     ],
     "routes": [
         {
-            "src": "/api/users/(.*)",
-            "methods": [
-                "POST",
-                "GET"
-            ],
+            "src": "/(.*)",
             "dest": "/server.js"
         }
     ]

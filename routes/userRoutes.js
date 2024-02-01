@@ -34,4 +34,10 @@ userRoutes.get("/", async (req, res) => {
     })
 })
 
+userRoutes.get("/tes", (re1, res) => {
+    res.json({
+        message: "Test"
+    })
+})
+
 export default userRoutes;
