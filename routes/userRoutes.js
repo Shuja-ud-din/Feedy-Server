@@ -26,9 +26,11 @@ userRoutes.post("/", async (req, res) => {
 })
 
 
-userRoutes.get("/", (req, res) => {
+userRoutes.get("/", async (req, res) => {
+    const user = await User.find({})
     res.json({
-        message: "Get User"
+        message: "Get User",
+        data: user
     })
 })
 
