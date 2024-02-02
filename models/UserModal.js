@@ -14,6 +14,9 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    isVerifed: Boolean,
+    role: String,
+    otp: String
 });
 
 const User = mongoose.model("User", userSchema);

@@ -13,7 +13,7 @@ app.use(cors());
 
 connectDB().catch(console.dir);
 
-app.use("/api/users/", userRoutes)
+app.use("/api/", userRoutes)
 
 const PORT = process.env.PORT || 5000;
 
