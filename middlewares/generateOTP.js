@@ -37,7 +37,8 @@ otp.get("/generateOTP", async (req, res) => {
     transporter.sendMail(mailOptions, async (error, info) => {
         if (error) {
             res.json({
-                message: "Unable to send OTP"
+                message: "Unable to send OTP",
+                error: error.message
             })
         } else {
             user.otp = otp;
