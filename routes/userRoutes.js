@@ -1,7 +1,10 @@
 import express from "express"
-import bcrypt from "bcryptjs"
+import nodemailer from "nodemailer"
 import User from "../models/UserModal.js";
 import jsonwebtoken from "jsonwebtoken";
+import getLastRecord from "../utils/getLastRecord.js";
+import generateToken from "../utils/generateToken.js";
+import CPToken from "../models/CPTokenModal.js";
 
 const userRoutes = express.Router();
 
@@ -66,11 +69,63 @@ userRoutes.post("/signin", async (req, res) => {
         })
     }
 
+});
+
+userRoutes.post("/forgetPassword", async (req, res) => {
+    const { email } = req.body;
+
+    const user = await User.find({ email: email });
+
+    if (!user) {
+        res.status(401).json({
+            message: "email not registered"
+        })
+        return;
+    }
+
+    const token = generateToken();
+
+    const changePasswordLink = `https://feedy-eta.vercel.app/SignIn/resetPassword/${token}`;
+
+    const mailOptions = {
+        from: process.env.MAIL_SENDER,
+        to: email,
+        subject: 'Change Password',
+        text: changePasswordLink
+    };
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.MAIL_SENDER,
+            pass: process.env.MAIL_PASS
+        }
+    });
+
+    transporter.sendMail(mailOptions, async (error, info) => {
+        if (error) {
+            res.status(401).json({
+                message: "Unable to send OTP",
+                error: error.message
+            })
+        } else {
+            await CPToken.create({
+                token: token,
+                email,
+                expiration_time: Date.now() + 120000
+            })
+            res.status(200).json({
+                message: `Change Password Link sent to ${email}`
+            });
+        }
+    });
+
 })
 
 
 userRoutes.get("/", async (req, res) => {
-    const user = await User.find({})
+    // const user = await User.find({})
+    const user = await getLastRecord(User)
     res.json({
         message: "Get User",
         data: user

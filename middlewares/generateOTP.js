@@ -1,16 +1,10 @@
 import nodemailer from "nodemailer"
 import express from "express"
 import User from "../models/UserModal.js";
+import CPToken from "../models/CPTokenModal.js";
 
 const otp = express.Router();
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.MAIL_SENDER,
-        pass: process.env.MAIL_PASS
-    }
-});
 
 otp.get("/generateOTP", async (req, res) => {
 
@@ -33,6 +27,14 @@ otp.get("/generateOTP", async (req, res) => {
         subject: 'OTP',
         text: otp
     };
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.MAIL_SENDER,
+            pass: process.env.MAIL_PASS
+        }
+    });
 
     transporter.sendMail(mailOptions, async (error, info) => {
         if (error) {
@@ -74,6 +76,31 @@ otp.post("/verifyOTP", async (req, res) => {
             message: "Invalid OTP"
         })
     }
+})
+
+otp.post('/verifyToken', async (req, res) => {
+    const { token } = req.body;
+
+    const tokenObj = await CPToken.find({ token: token });
+
+    if (!tokenObj[0]) {
+        res.status(400).json({
+            message: "Invalid Token"
+        })
+        return;
+    }
+
+    if (token === tokenObj[0].token && Date.now().toString() < tokenObj[0].expiration_time) {
+        res.status(200).json({
+            message: "Authentication Successful"
+        })
+    }
+    else {
+        res.status(400).json({
+            message: "Token expired"
+        })
+    }
+
 })
 
 export default otp;
