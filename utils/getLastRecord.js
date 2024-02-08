@@ -1,5 +1,5 @@
-const getLastRecord = async (collection) => {
-    const lastRecord = await collection.findOne({}, { sort: { _id: -1 } });
+const getLastRecord = async (modal) => {
+    const lastRecord = await modal.findOne({}, {}, { sort: { _id: -1 } }).exec();
     return lastRecord;
 }
 

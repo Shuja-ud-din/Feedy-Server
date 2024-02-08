@@ -79,18 +79,18 @@ otp.post("/verifyOTP", async (req, res) => {
 })
 
 otp.post('/verifyToken', async (req, res) => {
-    const { token } = req.body;
+    const { token, userId } = req.body;
 
-    const tokenObj = await CPToken.find({ token: token });
+    const tokenObj = await CPToken.find({ userId: userId });
 
     if (!tokenObj[0]) {
         res.status(400).json({
-            message: "Invalid Token"
+            message: "Invalid userId"
         })
         return;
     }
 
-    if (token === tokenObj[0].token && Date.now().toString() < tokenObj[0].expiration_time) {
+    if (userId === tokenObj[0].userId && token === tokenObj[0].token && Date.now().toString() < tokenObj[0].expiration_time) {
         res.status(200).json({
             message: "Authentication Successful"
         })

@@ -2,9 +2,9 @@ import express from "express"
 import nodemailer from "nodemailer"
 import User from "../models/UserModal.js";
 import jsonwebtoken from "jsonwebtoken";
-import getLastRecord from "../utils/getLastRecord.js";
 import generateToken from "../utils/generateToken.js";
 import CPToken from "../models/CPTokenModal.js";
+import getLastRecord from "../utils/getLastRecord.js";
 
 const userRoutes = express.Router();
 
@@ -19,7 +19,10 @@ userRoutes.post("/singup", async (req, res) => {
         return
     }
 
+    const lastUser = await getLastRecord(User);
+
     const user = await User.create({
+        id: lastUser ? lastUser.id + 1 : 1,
         name,
         email,
         password,
@@ -74,7 +77,8 @@ userRoutes.post("/signin", async (req, res) => {
 userRoutes.post("/forgetPassword", async (req, res) => {
     const { email } = req.body;
 
-    const user = await User.find({ email: email });
+    const user = await User.findOne({ email });
+    const tokenObj = await CPToken.findOne({ email });
 
     if (!user) {
         res.status(401).json({
@@ -102,40 +106,34 @@ userRoutes.post("/forgetPassword", async (req, res) => {
         }
     });
 
-    transporter.sendMail(mailOptions, async (error, info) => {
-        if (error) {
-            res.status(401).json({
-                message: "Unable to send OTP",
-                error: error.message
-            })
-        } else {
-            await CPToken.create({
-                token: token,
-                email,
-                expiration_time: Date.now() + 120000
-            })
-            res.status(200).json({
-                message: `Change Password Link sent to ${email}`
-            });
-        }
+    // transporter.sendMail(mailOptions, async (error, info) => {
+    //     if (error) {
+    //         res.status(401).json({
+    //             message: "Unable to send OTP",
+    //             error: error.message
+    //         })
+    //     } else {
+    tokenObj ?
+        (
+            console.log(tokenObj)
+        ) : await CPToken.create({
+            userId: user.id,
+            token: token,
+            email,
+            expiration_time: Date.now() + 120000
+        })
+    res.status(200).json({
+        message: `Change Password Link sent to ${email}`,
+        token: token
     });
+    // }
+    // });
 
 })
 
 
-userRoutes.get("/", async (req, res) => {
-    // const user = await User.find({})
-    const user = await getLastRecord(User)
-    res.json({
-        message: "Get User",
-        data: user
-    })
-})
-
-userRoutes.get("/tes", (re1, res) => {
-    res.json({
-        message: "Test"
-    })
+userRoutes.post("/resetPassword", async (req, res) => {
+    const { token, password, userId } = req.body;
 })
 
 export default userRoutes;

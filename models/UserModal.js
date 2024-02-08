@@ -14,6 +14,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    id: {
+        type: Number,
+        required: true,
+    },
     isVerifed: Boolean,
     role: String,
     otp: String

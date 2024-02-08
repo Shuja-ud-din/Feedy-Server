@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const CPTokenSchema = mongoose.Schema({
+    userId: {
+        type: Number,
+        required: true,
+    },
     email: {
         type: String,
         required: true

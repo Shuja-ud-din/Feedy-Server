@@ -4,6 +4,8 @@ import cors from "cors"
 import connectDB from "./config/ConnectDB.js";
 import userRoutes from "./routes/userRoutes.js";
 import otp from "./middlewares/generateOTP.js";
+import getLastRecord from "./utils/getLastRecord.js";
+import User from "./models/UserModal.js";
 
 dotenv.config();
 const app = express();
@@ -14,10 +16,8 @@ app.use(cors());
 
 connectDB().catch(console.dir);
 
-// sendEmail();
-
 app.use("/api/", userRoutes);
-app.use("/api/", otp)
+app.use("/api/", otp);
 
 const PORT = process.env.PORT || 5000;
 
