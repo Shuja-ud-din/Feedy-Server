@@ -55,6 +55,13 @@ userRoutes.post("/signin", async (req, res) => {
         return;
     }
 
+    if (!user.isVerifed) {
+        res.status(403).json({
+            message: "User not Verfied"
+        })
+        return;
+    }
+
     if (password === user.password) {
         const token = jsonwebtoken.sign({ userId: user._id }, process.env.JWT_SECRET);
         res.json({
@@ -106,34 +113,61 @@ userRoutes.post("/forgetPassword", async (req, res) => {
         }
     });
 
-    // transporter.sendMail(mailOptions, async (error, info) => {
-    //     if (error) {
-    //         res.status(401).json({
-    //             message: "Unable to send OTP",
-    //             error: error.message
-    //         })
-    //     } else {
-    tokenObj ?
-        (
-            console.log(tokenObj)
-        ) : await CPToken.create({
-            userId: user.id,
-            token: token,
-            email,
-            expiration_time: Date.now() + 120000
-        })
-    res.status(200).json({
-        message: `Change Password Link sent to ${email}`,
-        token: token
+    const changeToken = async () => {
+        tokenObj.token = token;
+        tokenObj.expiration_time = Date.now() + 600000;
+        await tokenObj.save();
+    }
+
+    transporter.sendMail(mailOptions, async (error, info) => {
+        if (error) {
+            res.status(401).json({
+                message: "Unable to send OTP",
+                error: error.message
+            })
+        } else {
+            tokenObj ?
+                await changeToken() : await CPToken.create({
+                    userId: user.id,
+                    token: token,
+                    email,
+                    expiration_time: Date.now() + 600000
+                })
+            res.status(200).json({
+                message: `Change Password Link sent to ${email}`,
+                token: token
+            });
+        }
     });
-    // }
-    // });
 
 })
 
 
 userRoutes.post("/resetPassword", async (req, res) => {
     const { token, password, userId } = req.body;
+
+    const tokenObj = await CPToken.findOne({ userId });
+
+    if (!tokenObj) {
+        res.status(401).json({
+            message: "Invalid token"
+        })
+        return;
+    }
+
+    if (tokenObj.token === token && Date.now().toString() < tokenObj.expiration_time) {
+        const user = await User.findOne({ id: userId });
+        await CPToken.deleteOne({ userId });
+        user.password = password;
+        await user.save();
+        res.status(200).json({
+            message: "Password Changed Successfully"
+        })
+    } else {
+        res.status(404).json({
+            message: "Token Expired"
+        })
+    }
 })
 
 export default userRoutes;
