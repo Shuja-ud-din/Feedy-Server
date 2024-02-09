@@ -96,7 +96,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
 
     const token = generateToken();
 
-    const changePasswordLink = `https://feedy-eta.vercel.app/SignIn/resetPassword/${token}`;
+    const changePasswordLink = `https://feedy-eta.vercel.app/SignIn/resetPassword/${user.id}/${token}`;
 
     const mailOptions = {
         from: process.env.MAIL_SENDER,
@@ -134,8 +134,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
                     expiration_time: Date.now() + 600000
                 })
             res.status(200).json({
-                message: `Change Password Link sent to ${email}`,
-                token: token
+                message: `Change Password Link sent to ${email}`
             });
         }
     });
@@ -143,7 +142,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
 })
 
 
-userRoutes.post("/resetPassword", async (req, res) => {
+userRoutes.put("/resetPassword", async (req, res) => {
     const { token, password, userId } = req.body;
 
     const tokenObj = await CPToken.findOne({ userId });
