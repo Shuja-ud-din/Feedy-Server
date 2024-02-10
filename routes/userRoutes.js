@@ -14,6 +14,7 @@ userRoutes.post("/singup", async (req, res) => {
     const userExist = await User.findOne({ email });
     if (userExist) {
         res.status(400).json({
+            success: false,
             message: "Email already Taken"
         })
         return
@@ -33,11 +34,13 @@ userRoutes.post("/singup", async (req, res) => {
 
     if (user) {
         res.status(201).json({
+            success: true,
             message: "User added successfully",
         })
     }
     else {
         res.status(400).json({
+            success: false,
             message: "User not added",
         })
     }
