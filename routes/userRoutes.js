@@ -58,12 +58,12 @@ userRoutes.post("/signin", async (req, res) => {
         return;
     }
 
-    if (!user.isVerifed) {
-        res.status(403).json({
-            message: "User not Verfied"
-        })
-        return;
-    }
+    // if (!user.isVerifed) {
+    //     res.status(403).json({
+    //         message: "User not Verfied"
+    //     })
+    //     return;
+    // }
 
     if (password === user.password) {
         const token = jsonwebtoken.sign({ userId: user._id }, process.env.JWT_SECRET);
