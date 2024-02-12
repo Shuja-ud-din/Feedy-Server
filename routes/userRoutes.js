@@ -13,7 +13,7 @@ userRoutes.post("/singup", async (req, res) => {
 
     const userExist = await User.findOne({ email });
     if (userExist) {
-        res.status(400).json({
+        res.status(201).json({
             success: false,
             message: "Email already Taken"
         })
@@ -33,13 +33,13 @@ userRoutes.post("/singup", async (req, res) => {
     })
 
     if (user) {
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: "User added successfully",
         })
     }
     else {
-        res.status(400).json({
+        res.status(201).json({
             success: false,
             message: "User not added",
         })
@@ -59,7 +59,7 @@ userRoutes.post("/signin", async (req, res) => {
     }
 
     // if (!user.isVerifed) {
-    //     res.status(403).json({
+    //     res.status(201).json({
     //         message: "User not Verfied"
     //     })
     //     return;
@@ -67,7 +67,7 @@ userRoutes.post("/signin", async (req, res) => {
 
     if (password === user.password) {
         const token = jsonwebtoken.sign({ userId: user._id }, process.env.JWT_SECRET);
-        res.json({
+        res.status(200).json({
             user: {
                 name: user.name,
                 email: user.email,
@@ -77,7 +77,7 @@ userRoutes.post("/signin", async (req, res) => {
         })
     }
     else {
-        res.json({
+        res.status(200).json({
             message: "Incorrect Password"
         })
     }
@@ -91,7 +91,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
     const tokenObj = await CPToken.findOne({ email });
 
     if (!user) {
-        res.status(401).json({
+        res.status(200).json({
             message: "email not registered"
         })
         return;
@@ -124,8 +124,8 @@ userRoutes.post("/forgetPassword", async (req, res) => {
 
     transporter.sendMail(mailOptions, async (error, info) => {
         if (error) {
-            res.status(401).json({
-                message: "Unable to send OTP",
+            res.status(201).json({
+                message: "Unable to send Mail",
                 error: error.message
             })
         } else {
@@ -151,7 +151,7 @@ userRoutes.put("/resetPassword", async (req, res) => {
     const tokenObj = await CPToken.findOne({ userId });
 
     if (!tokenObj) {
-        res.status(401).json({
+        res.status(201).json({
             message: "Invalid token"
         })
         return;
@@ -166,7 +166,7 @@ userRoutes.put("/resetPassword", async (req, res) => {
             message: "Password Changed Successfully"
         })
     } else {
-        res.status(404).json({
+        res.status(201).json({
             message: "Token Expired"
         })
     }

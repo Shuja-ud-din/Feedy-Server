@@ -13,7 +13,7 @@ otp.get("/generateOTP", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-        res.status(400).json({
+        res.status(201).json({
             message: "Email not registered"
         });
         return;
@@ -59,7 +59,7 @@ otp.post("/verifyOTP", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-        res.status(401).json({
+        res.status(201).json({
             message: "Email not Registered"
         })
     }
@@ -72,7 +72,7 @@ otp.post("/verifyOTP", async (req, res) => {
         })
     }
     else {
-        res.status(403).json({
+        res.status(201).json({
             message: "Invalid OTP"
         })
     }
@@ -84,7 +84,7 @@ otp.post('/verifyToken', async (req, res) => {
     const tokenObj = await CPToken.find({ userId: userId });
 
     if (!tokenObj[0]) {
-        res.status(400).json({
+        res.status(201).json({
             message: "Invalid userId"
         })
         return;
@@ -96,7 +96,7 @@ otp.post('/verifyToken', async (req, res) => {
         })
     }
     else {
-        res.status(400).json({
+        res.status(201).json({
             message: "Token expired"
         })
     }
