@@ -53,6 +53,7 @@ userRoutes.post("/signin", async (req, res) => {
 
     if (!user) {
         res.status(202).json({
+            success: false,
             message: "User not found"
         })
         return;
@@ -68,6 +69,7 @@ userRoutes.post("/signin", async (req, res) => {
     if (password === user.password) {
         const token = jsonwebtoken.sign({ userId: user._id }, process.env.JWT_SECRET);
         res.status(200).json({
+            success: true,
             user: {
                 name: user.name,
                 email: user.email,
@@ -78,6 +80,7 @@ userRoutes.post("/signin", async (req, res) => {
     }
     else {
         res.status(200).json({
+            success: false,
             message: "Incorrect Password"
         })
     }
@@ -92,6 +95,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
 
     if (!user) {
         res.status(200).json({
+            success: false,
             message: "email not registered"
         })
         return;
@@ -125,6 +129,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
     transporter.sendMail(mailOptions, async (error, info) => {
         if (error) {
             res.status(201).json({
+                success: false,
                 message: "Unable to send Mail",
                 error: error.message
             })
@@ -137,6 +142,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
                     expiration_time: Date.now() + 600000
                 })
             res.status(200).json({
+                success: true,
                 message: `Change Password Link sent to ${email}`
             });
         }
@@ -152,6 +158,7 @@ userRoutes.put("/resetPassword", async (req, res) => {
 
     if (!tokenObj) {
         res.status(201).json({
+            success: false,
             message: "Invalid token"
         })
         return;
@@ -163,10 +170,12 @@ userRoutes.put("/resetPassword", async (req, res) => {
         user.password = password;
         await user.save();
         res.status(200).json({
+            success: true,
             message: "Password Changed Successfully"
         })
     } else {
         res.status(201).json({
+            success: false,
             message: "Token Expired"
         })
     }

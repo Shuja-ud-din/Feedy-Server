@@ -14,6 +14,7 @@ otp.get("/generateOTP", async (req, res) => {
 
     if (!user) {
         res.status(201).json({
+            success: false,
             message: "Email not registered"
         });
         return;
@@ -39,6 +40,7 @@ otp.get("/generateOTP", async (req, res) => {
     transporter.sendMail(mailOptions, async (error, info) => {
         if (error) {
             res.json({
+                success: false,
                 message: "Unable to send OTP",
                 error: error.message
             })
@@ -47,6 +49,7 @@ otp.get("/generateOTP", async (req, res) => {
             user.isVerifed = false;
             await user.save();
             res.status(200).json({
+                success: true,
                 message: `OTP sent to ${email}`
             });
         }
@@ -60,6 +63,7 @@ otp.post("/verifyOTP", async (req, res) => {
 
     if (!user) {
         res.status(201).json({
+            success: false,
             message: "Email not Registered"
         })
     }
@@ -68,11 +72,13 @@ otp.post("/verifyOTP", async (req, res) => {
         user.isVerifed = true;
         await user.save();
         res.status(200).json({
+            success: true,
             message: "OTP verified"
         })
     }
     else {
         res.status(201).json({
+            success: false,
             message: "Invalid OTP"
         })
     }
@@ -85,6 +91,7 @@ otp.post('/verifyToken', async (req, res) => {
 
     if (!tokenObj[0]) {
         res.status(201).json({
+            success: false,
             message: "Invalid userId"
         })
         return;
@@ -92,11 +99,13 @@ otp.post('/verifyToken', async (req, res) => {
 
     if (userId === tokenObj[0].userId && token === tokenObj[0].token && Date.now().toString() < tokenObj[0].expiration_time) {
         res.status(200).json({
+            success: true,
             message: "Authentication Successful"
         })
     }
     else {
         res.status(201).json({
+            success: false,
             message: "Token expired"
         })
     }
