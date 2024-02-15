@@ -67,7 +67,10 @@ userRoutes.post("/signin", async (req, res) => {
     // }
 
     if (password === user.password) {
-        const token = jsonwebtoken.sign({ userId: user._id }, process.env.JWT_SECRET);
+        const token = jsonwebtoken.sign({
+            userId: user.id,
+            role: user.role,
+        }, process.env.JWT_SECRET);
         res.status(200).json({
             success: true,
             user: {

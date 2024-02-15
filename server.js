@@ -6,6 +6,8 @@ import userRoutes from "./routes/userRoutes.js";
 import otp from "./middlewares/generateOTP.js";
 import getLastRecord from "./utils/getLastRecord.js";
 import User from "./models/UserModal.js";
+import { authentication } from "./middlewares/authentication.js";
+import ordersRoutes from "./routes/ordersRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +20,7 @@ connectDB().catch(console.dir);
 
 app.use("/api/", userRoutes);
 app.use("/api/", otp);
+app.use("/api/", ordersRoutes);
 
 const PORT = process.env.PORT || 5000;
 
