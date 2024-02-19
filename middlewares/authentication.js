@@ -1,10 +1,5 @@
 import jwt from "jsonwebtoken";
 
-const user = {
-    _id: "fwefweef",
-    name: "John"
-}
-
 const authentication = async (req, res, next) => {
     const token = req.header("authorization") && req.header("authorization").split(" ")[1];
 

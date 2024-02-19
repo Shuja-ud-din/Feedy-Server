@@ -5,6 +5,7 @@ import jsonwebtoken from "jsonwebtoken";
 import generateToken from "../utils/generateToken.js";
 import CPToken from "../models/CPTokenModal.js";
 import getLastRecord from "../utils/getLastRecord.js";
+import sendMail from "../utils/sendMail.js";
 
 const userRoutes = express.Router();
 
@@ -32,7 +33,20 @@ userRoutes.post("/singup", async (req, res) => {
         otp: null
     })
 
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
     if (user) {
+        user.otp = otp;
+        await user.save();
+        sendMail(email, "OTP", otp, (error) => {
+            if (error) {
+                res.json({
+                    success: false,
+                    message: "Unable to send email.",
+                })
+                return;
+            }
+        });
         res.status(200).json({
             success: true,
             message: "User added successfully",
@@ -150,9 +164,7 @@ userRoutes.post("/forgetPassword", async (req, res) => {
             });
         }
     });
-
 })
-
 
 userRoutes.put("/resetPassword", async (req, res) => {
     const { token, password, userId } = req.body;
