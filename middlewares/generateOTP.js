@@ -6,7 +6,7 @@ import CPToken from "../models/CPTokenModal.js";
 const otp = express.Router();
 
 
-otp.get("/generateOTP", async (req, res) => {
+otp.post("/generateOTP", async (req, res) => {
 
     const { email } = req.body;
 
