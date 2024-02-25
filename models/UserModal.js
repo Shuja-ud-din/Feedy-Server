@@ -19,6 +19,11 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    phoneNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
     isVerifed: Boolean,
     role: String,
     otp: String

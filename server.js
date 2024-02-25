@@ -8,6 +8,7 @@ import getLastRecord from "./utils/getLastRecord.js";
 import User from "./models/UserModal.js";
 import { authentication } from "./middlewares/authentication.js";
 import ordersRoutes from "./routes/ordersRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ connectDB().catch(console.dir);
 app.use("/api/", userRoutes);
 app.use("/api/", otp);
 app.use("/api/", ordersRoutes);
+app.use("/api/", productRoutes);
 
 const PORT = process.env.PORT || 5000;
 

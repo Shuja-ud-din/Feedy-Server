@@ -10,7 +10,7 @@ import sendMail from "../utils/sendMail.js";
 const userRoutes = express.Router();
 
 userRoutes.post("/singup", async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, phoneNumber } = req.body;
 
     const userExist = await User.findOne({ email });
     if (userExist) {
@@ -28,10 +28,11 @@ userRoutes.post("/singup", async (req, res) => {
         name,
         email,
         password,
+        phoneNumber,
         isVerifed: false,
         role: "User",
         otp: null
-    })
+    });
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
