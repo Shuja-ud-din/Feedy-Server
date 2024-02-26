@@ -54,6 +54,10 @@ const OrderSchema = mongoose.Schema({
         type: Number,
         default: 0.0,
     },
+    discount: {
+        type: Number,
+        default: 0.0,
+    },
     shippingPrice: {
         type: Number,
         default: 0.0,

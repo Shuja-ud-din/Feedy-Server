@@ -1,16 +1,12 @@
 import express from "express";
 import Product from "../models/ProductModel.js";
 import getLastRecord from "../utils/getLastRecord.js";
+import { authentication } from "../middlewares/authentication.js";
 
 const productRoutes = express.Router();
 
-productRoutes.post("/product", async (req, res) => {
+productRoutes.post("/product", authentication, async (req, res) => {
     const { name, image, description, price, discount } = req.body;
-
-    // if (!name || !image || !description || !price) return res.status(400).json({
-    //     success: false,
-    //     message: "Missing fields"
-    // });
 
     const lastProduct = await getLastRecord(Product);
 
