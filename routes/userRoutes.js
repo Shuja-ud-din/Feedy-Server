@@ -12,11 +12,12 @@ const userRoutes = express.Router();
 userRoutes.post("/singup", async (req, res) => {
     const { name, email, password, phoneNumber } = req.body;
 
-    const userExist = await User.findOne({ email });
-    if (userExist) {
+    const emailExist = await User.findOne({ email });
+    const phNoExist = await User.findOne({ phoneNumber });
+    if (emailExist || phNoExist) {
         res.status(201).json({
             success: false,
-            message: "Email already Taken"
+            message: `${emailExist ? "Email" : "Phone Number"} already Taken`
         })
         return
     }
