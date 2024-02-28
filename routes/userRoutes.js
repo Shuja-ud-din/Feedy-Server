@@ -182,14 +182,15 @@ userRoutes.put("/resetPassword", async (req, res) => {
 
     if (tokenObj.token === token && Date.now().toString() < tokenObj.expiration_time) {
         const user = await User.findOne({ id: userId });
-        await CPToken.deleteOne({ userId });
         user.password = password;
         await user.save();
+        await CPToken.deleteOne({ userId });
         res.status(200).json({
             success: true,
             message: "Password Changed Successfully"
         })
     } else {
+        await CPToken.deleteOne({ userId });
         res.status(201).json({
             success: false,
             message: "Token Expired"
