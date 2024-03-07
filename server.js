@@ -9,6 +9,7 @@ import User from "./models/UserModal.js";
 import { authentication } from "./middlewares/authentication.js";
 import ordersRoutes from "./routes/ordersRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import storeRoutes from "./routes/storeRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ app.use("/api/", userRoutes);
 app.use("/api/", otp);
 app.use("/api/", ordersRoutes);
 app.use("/api/", productRoutes);
+app.use("/api/", storeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
