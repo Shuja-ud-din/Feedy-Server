@@ -10,19 +10,19 @@ storeRoutes.get('/stores', authentication, async (req, res) => {
     try {
         const store = await Store.find();
 
-        const data = store.map((order) => {
+        const data = store.map((store) => {
             return {
-                id: order.id,
-                name: order.name,
-                contactNo: order.contactNo,
-                adminEmail: order.adminEmail,
-                adress: order.adress
+                id: store.id,
+                name: store.name,
+                contactNo: store.contactNo,
+                adminEmail: store.adminEmail,
+                adress: store.adress
             }
         })
 
         res.json({
             success: true,
-            message: "All Orders",
+            message: "All Stores",
             data
         })
 
@@ -41,31 +41,31 @@ storeRoutes.get('/store/:storeId', authentication, async (req, res) => {
     const { storeId } = req.params;
 
     try {
-        const order = await Store.findOne({ id: storeId });
+        const store = await Store.findOne({ id: storeId });
 
         const data = {
-            id: order.id,
-            name: order.name,
-            contactNo: order.contactNo,
-            adminEmail: order.adminEmail,
-            adress: order.adress,
-            zipCode: order.zipCode,
-            location: order.location,
-            storeTiming: order.storeTiming,
-            pickupTiming: order.pickupTiming,
-            deliveryTiming: order.deliveryTiming
+            id: store.id,
+            name: store.name,
+            contactNo: store.contactNo,
+            adminEmail: store.adminEmail,
+            adress: store.adress,
+            zipCode: store.zipCode,
+            location: store.location,
+            storeTiming: store.storeTiming,
+            pickupTiming: store.pickupTiming,
+            deliveryTiming: store.deliveryTiming
         }
 
         res.json({
             success: true,
-            message: "Order",
-            order: data
+            message: "Store",
+            store: data
         })
 
     } catch (error) {
         res.json({
             success: false,
-            error: "Order not Found"
+            error: "Store not Found"
         })
     }
 
