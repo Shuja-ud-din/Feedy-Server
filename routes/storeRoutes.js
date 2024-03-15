@@ -5,12 +5,12 @@ import getLastRecord from "../utils/getLastRecord.js";
 
 const storeRoutes = express.Router();
 
-storeRoutes.get('/orders', authentication, async (req, res) => {
+storeRoutes.get('/stores', authentication, async (req, res) => {
 
     try {
-        const orders = await Store.find();
+        const store = await Store.find();
 
-        const data = orders.map((order) => {
+        const data = store.map((order) => {
             return {
                 id: order.id,
                 name: order.name,
@@ -36,12 +36,12 @@ storeRoutes.get('/orders', authentication, async (req, res) => {
 })
 
 
-storeRoutes.get('/orders/:orderId', authentication, async (req, res) => {
+storeRoutes.get('/store/:storeId', authentication, async (req, res) => {
 
-    const { orderId } = req.params;
+    const { storeId } = req.params;
 
     try {
-        const order = await Store.findOne({ id: orderId });
+        const order = await Store.findOne({ id: storeId });
 
         const data = {
             id: order.id,
@@ -72,7 +72,7 @@ storeRoutes.get('/orders/:orderId', authentication, async (req, res) => {
 })
 
 
-storeRoutes.post("/orders/createOrder", authentication, async (req, res) => {
+storeRoutes.post("/store/createStore", authentication, async (req, res) => {
     const { name, contactNo, adminEmail, adress, zipCode, location, storeTiming, pickupTiming, deliveryTiming } = req.body;
 
     const isEmailValid = await Store.findOne({ adminEmail });
